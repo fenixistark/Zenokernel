@@ -186,9 +186,7 @@ echo -e "${GREEN}DTB + DTBO ready!${NC}"
 rm -rf AnyKernel3
 echo "[*] Cloning AnyKernel3..."
 git clone -q -b "$AK3_BRANCH" "$AK3_REPO" AnyKernel3 || exit 1
-    sed -i "s/AnyKernel3/ZenoKernel/g" AnyKernel3/anykernel.sh
-    sed -i "s/osm0sis/fenixistark/g" AnyKernel3/anykernel.sh
-    sed -i "/AnyKernel3/s/.*/ui_print \"  ZenoKernel v1.0 - Max Perf  \"/g" AnyKernel3/anykernel.sh
+    sed -i "s|^kernel.string=.*|kernel.string=⚡ ZENOKERNEL v2.0 ⚡ by fenixistark · based on notkernel-oss by Skye · credits: Sultan Alsawaf (Schedutil)|" AnyKernel3/anykernel.sh
 
 
 
