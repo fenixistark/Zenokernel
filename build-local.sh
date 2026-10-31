@@ -195,6 +195,18 @@ rm -rf AnyKernel3
 echo "[*] Cloning AnyKernel3..."
 git clone -q -b "$AK3_BRANCH" "$AK3_REPO" AnyKernel3 || exit 1
     sed -i "s|^kernel.string=.*|kernel.string=⚡ ZENOKERNEL v2.0 ⚡ by fenixistark · based on notkernel-oss by Skye · credits: Sultan Alsawaf (Schedutil)|" AnyKernel3/anykernel.sh
+    sed -i 's/^do.devicecheck=1/do.devicecheck=0/' AnyKernel3/anykernel.sh
+    printf '%s\n' \
+    '# ZenoKernel: Universal Hardware Check' \
+    'ui_print "- Verifying Samsung S20 FE (r8q) hardware..."' \
+    'HARDWARE_SKU=$(getprop ro.boot.hardware.sku)' \
+    'if [ "$HARDWARE_SKU" != "r8q" ] && [ "$HARDWARE_SKU" != "r8" ]; then' \
+    '    ui_print "! Unsupported hardware. This kernel is only for r8q/r8."' \
+    '    ui_print "! Detected SKU: $HARDWARE_SKU"' \
+    '    abort' \
+    'fi' \
+    'ui_print "- Device verified: $HARDWARE_SKU"' \
+    >> AnyKernel3/anykernel.sh
 
 
 
