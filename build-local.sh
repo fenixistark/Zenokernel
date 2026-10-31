@@ -154,10 +154,17 @@ echo -e "\n${GREEN}Starting compilation...${NC}"
 
 rm -rf out/arch/arm64/boot #ok
 
+rm -f out/kernel/config_data.gz out/kernel/configs.o
 make $MAKE_ARGS dtbo.img
 make $MAKE_ARGS Image.gz
 
 
+if [ -f out/kernel/config_data.gz ]; then
+    zcat out/kernel/config_data.gz | grep -q "^CONFIG_ARM64_VA_BITS=48" || { echo -e "\033[0;31mFATAL: embedded config is 39\033[0m"; exit 1; }
+    zcat out/kernel/config_data.gz | grep -q "^CONFIG_PELT_UTIL_HALFLIFE_16=y" || { echo -e "\033[0;31mFATAL: embedded PELT missing\033[0m"; exit 1; }
+else
+    echo -e "\033[0;31mFATAL: out/kernel/config_data.gz not found\033[0m"; exit 1;
+fi
 # Post build checks
 if [ ! -f "$BOOT_DIR/Image.gz" ]; then
     echo -e "${RED}Compilation failed!${NC}"
