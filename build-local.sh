@@ -154,6 +154,7 @@ echo -e "\n${GREEN}Starting compilation...${NC}"
 
 rm -rf out/arch/arm64/boot #ok
 
+cp out/.config arch/arm64/configs/stock-defconfig
 rm -f out/kernel/config_data.gz out/kernel/configs.o
 make $MAKE_ARGS dtbo.img
 make $MAKE_ARGS Image.gz
