@@ -22,7 +22,8 @@ jobs:
       - name: Set up ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ runner.os }}-kernel-r8q
+          # Chave isolada: impede puxar cache do notkernel-oss (fork upstream)
+          key: ${{ runner.os }}-kernel-r8q-zeno-v2
 
       - name: Install Dependencies
         run: |
@@ -33,7 +34,28 @@ jobs:
         run: |
           chmod +x build-local.sh
           export USE_CCACHE=1
+          # Limpa cache sujo do runner (caso o fork tenha puxado algo)
+          ccache -C --verbose 2>/dev/null || true
           printf "r8q\nksu\n" | ./build-local.sh
+
+      - name: Verify .config (fail loud)
+        run: |
+          set -e
+          echo "=== Sanity check .config ==="
+          for cfg in CONFIG_PELT_UTIL_HALFLIFE_16 CONFIG_RCU_LAZY CONFIG_RCU_NOCB_CPU; do
+            grep -q "^${cfg}=y" out/.config || { echo "FATAL: ${cfg} missing"; exit 1; }
+          done
+          grep -q '^CONFIG_CMDLINE=.*android_enable_rcu_lazy' out/.config || { echo "FATAL: CMDLINE wrong"; exit 1; }
+          echo "VA_BITS: $(grep '^CONFIG_ARM64_VA_BITS=' out/.config)"
+          echo "CMDLINE: $(grep '^CONFIG_CMDLINE=' out/.config)"
+          echo "=== OK ==="
+
+      - name: Upload .config for audit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kernel-config-r8q-${{ github.sha }}
+          path: out/.config
 
       - name: Upload Flashable ZIP
         uses: actions/upload-artifact@v4
