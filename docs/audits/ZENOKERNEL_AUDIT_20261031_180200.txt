@@ -1,0 +1,531 @@
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "═══════════════════════════════════════════════════════════════════"
+[?2004l═══════════════════════════════════════════════════════════════════
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  ZENOKERNEL v2.0 — AUDITORIA COMPLETA DE CÓDIGO FONTE"
+[?2004l  ZENOKERNEL v2.0 — AUDITORIA COMPLETA DE CÓDIGO FONTE
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  Data: $(date)"
+[?2004l  Data: Sat Oct 31 18:02:00 -03 2026
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  Device: Galaxy S20 FE 5G (r8q / SM8250 / Snapdragon 865)"
+[?2004l  Device: Galaxy S20 FE 5G (r8q / SM8250 / Snapdragon 865)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  Base: notkernel-oss/not_samsung.sm8250-4.19 (Linux 4.19.325 CIP)"
+[?2004l  Base: notkernel-oss/not_samsung.sm8250-4.19 (Linux 4.19.325 CIP)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  Repo: fenixistark/Zenokernel (branch staging)"
+[?2004l  Repo: fenixistark/Zenokernel (branch staging)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "═══════════════════════════════════════════════════════════════════"
+[?2004l═══════════════════════════════════════════════════════════════════
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 1] VERSÃO E IDENTIDADE DO KERNEL"
+[?2004l
+### [SEÇÃO 1] VERSÃO E IDENTIDADE DO KERNEL
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Makefile (VERSION/PATCHLEVEL/SUBLEVEL/EXTRAVERSION/NAME) ---"
+[?2004l--- Makefile (VERSION/PATCHLEVEL/SUBLEVEL/EXTRAVERSION/NAME) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -E "^(VERSION|PATCHLEVEL|SUBLEVEL|EXTRAVERSION|NAME) " Makefile | head -6
+[?2004lVERSION = 4
+PATCHLEVEL = 19
+SUBLEVEL = 325
+EXTRAVERSION =
+NAME = "People's Front"
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Local versions ---"
+[?2004l--- Local versions ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m for f in localversion localversion-cip localversion-st; do [ -f "$f" ] && echo "$f: $(cat $f)"; done
+[?2004llocalversion: :not
+localversion-cip: -cip135
+localversion-st: -st19
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- kernel.release (se existir) ---"
+[?2004l--- kernel.release (se existir) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m cat out/include/config/kernel.release 2>/dev/null || echo "(não compilado localmente)"
+[?2004l(não compilado localmente)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 2] ESTADO DO GIT"
+[?2004l
+### [SEÇÃO 2] ESTADO DO GIT
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Branch / Sync ---"
+[?2004l--- Branch / Sync ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m git status --short --branch | head -3
+[?2004l## staging...origin/staging
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Últimos 10 commits ---"
+[?2004l--- Últimos 10 commits ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m git log --oneline -10
+[?2004l3849d8896527 fix(ci): permanently inject r8q hardware check and disable device check in AnyKernel3
+f0dd87120f8c fix(build): sync stock-defconfig with .config before embedding to fix VA_BITS mismatch
+17f432b7ce52 fix(cpufreq): raise Prime input boost to max freq (2841600) to prevent stutter in games
+be382a8a467d fix(cpufreq): restore HAL bypass (verify_within_limits ib_min,ib_min) + unboost watchdog
+7f06a418a23a fix(build): force config_data.gz regeneration and fail loud before ZIP creation
+8f6da424958d Update r8q-build.yml
+8a507b607ac1 Update r8q-build.yml
+7b489462c9b8 feat(wifi): reduce WoW data inactivity timeout from 50s to 10s for standby efficiency
+2e9847225298 feat(power): native kthread enforces swappiness=10 and VM ratios without root
+cf1566e48e18 feat(power): force PELT_16, RCU_LAZY and inject cmdline for standby efficiency
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Working tree (0 = limpo) ---"
+[?2004l--- Working tree (0 = limpo) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m git status --porcelain | wc -l
+[?2004l0
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Push pendente (0 = sincronizado) ---"
+[?2004l--- Push pendente (0 = sincronizado) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m git log origin/staging..HEAD --oneline 2>/dev/null | wc -l
+[?2004l0
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Submodules ---"
+[?2004l--- Submodules ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m git submodule status | head -5
+[?2004l a54e0dc6cf0aff4dd87fec49644a02d2eb612905 Baseband-guard (v1.1-13-ga54e0dc)
+ 7d46da2ae166570c14b5336a5f5fe3336aa99f07 KernelSU (v3.3.0-25)
+ 9122a0bf5705e50d9a0ba12ef662413028f3a877 NoMount (v2.0.0-104-g9122a0b)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 3] ESTRUTURA DA ÁRVORE DO KERNEL"
+[?2004l
+### [SEÇÃO 3] ESTRUTURA DA ÁRVORE DO KERNEL
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Top-level (pastas principais) ---"
+[?2004l--- Top-level (pastas principais) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m ls -d */ 2>/dev/null | tr '\n' ' '; echo
+[?2004lBaseband-guard/ Documentation/ KernelSU/ LICENSES/ NoMount/ android/ arch/ block/ certs/ crypto/ drivers/ firmware/ fs/ include/ init/ ipc/ kernel/ lib/ mm/ net/ out/ samples/ scripts/ security/ sound/ techpack/ tools/ usr/ virt/ 
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Árvores DTS Samsung (r8q) ---"
+[?2004l--- Árvores DTS Samsung (r8q) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m ls arch/arm64/boot/dts/samsung/r8q/ 2>/dev/null | head -20
+[?2004lMakefile
+kona-sec-r8q-chn-overlay-r00.dts
+kona-sec-r8q-chn-overlay-r01.dts
+kona-sec-r8q-chn-overlay-r02.dts
+kona-sec-r8q-chn-overlay-r03.dts
+kona-sec-r8q-chn-overlay-r04.dts
+kona-sec-r8q-chn-overlay-r05.dts
+kona-sec-r8q-chn-overlay-r06.dts
+kona-sec-r8q-eur-overlay-r00.dts
+kona-sec-r8q-eur-overlay-r01.dts
+kona-sec-r8q-eur-overlay-r02.dts
+kona-sec-r8q-eur-overlay-r03.dts
+kona-sec-r8q-eur-overlay-r04.dts
+kona-sec-r8q-eur-overlay-r05.dts
+kona-sec-r8q-eur-overlay-r06.dts
+kona-sec-r8q-eur-overlay-r07.dts
+kona-sec-r8q-eur-overlay-r08.dts
+kona-sec-r8q-eur-overlay-r09.dts
+kona-sec-r8q-eur-overlay-r10.dts
+kona-sec-r8q-kor-overlay-r00.dts
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Árvore DTS Qualcomm (kona) — arquivos principais ---"
+[?2004l--- Árvore DTS Qualcomm (kona) — arquivos principais ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m ls arch/arm64/boot/dts/vendor/qcom/kona*.dtsi 2>/dev/null | head -10
+[?2004larch/arm64/boot/dts/vendor/qcom/kona-7230-iot-cpu.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-7230-iot-rb5.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-7230-iot-v2.1.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-7230m-iot-rb5.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-arglass.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-audio-ar.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-audio-overlay-ar.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-audio-overlay.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-audio.dtsi
+arch/arm64/boot/dts/vendor/qcom/kona-bus.dtsi
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Configs Samsung ---"
+[?2004l--- Configs Samsung ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m ls arch/arm64/configs/vendor/samsung/ 2>/dev/null
+[?2004lbloomxq.config
+c1q.config
+c2q.config
+f2q.config
+gts7l.config
+gts7lwifi.config
+gts7xl.config
+gts7xlwifi.config
+kona-sec-common.config
+r8q.config
+x1q.config
+y2q.config
+z3q.config
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Configs not/ (extra) ---"
+[?2004l--- Configs not/ (extra) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m ls arch/arm64/configs/vendor/not/ 2>/dev/null
+[?2004lksu.config
+localversion.config
+permissive.config
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 4] CONFIGS BASE — Integridade"
+[?2004l
+### [SEÇÃO 4] CONFIGS BASE — Integridade
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- kona-perf_defconfig (linhas-chave) ---"
+[?2004l--- kona-perf_defconfig (linhas-chave) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "^CONFIG_(RCU_LAZY|RCU_NOCB_CPU|RCU_EXPERT|PELT_UTIL_HALFLIFE|LOCALVERSION|DEBUG_INFO|TCP_CONG_BBR|DEFAULT_TCP_CONG)" arch/arm64/configs/vendor/kona-perf_defconfig 2>/dev/null
+[?2004l1:CONFIG_LOCALVERSION="-perf"
+14:CONFIG_RCU_EXPERT=y
+17:CONFIG_RCU_NOCB_CPU=y
+18:CONFIG_RCU_LAZY=y
+24:CONFIG_PELT_UTIL_HALFLIFE_16=y
+778:CONFIG_DEBUG_INFO=y
+795:CONFIG_TCP_CONG_BBR=y
+796:CONFIG_DEFAULT_TCP_CONG="bbr"
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- kona-sec-common.config (linhas-chave) ---"
+[?2004l--- kona-sec-common.config (linhas-chave) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "^CONFIG_(PELT_UTIL_HALFLIFE_16|RCU_LAZY|RCU_NOCB_CPU|INPUT_BOOST_FREQ_PERFP|INPUT_BOOST_DURATION_MS|CMDLINE|CMDLINE_EXTEND|CPU_EVENT_BOOST)" arch/arm64/configs/vendor/samsung/kona-sec-common.config
+[?2004l439:CONFIG_CPU_EVENT_BOOST=y
+444:CONFIG_INPUT_BOOST_FREQ_PERFP=2841600
+445:CONFIG_INPUT_BOOST_DURATION_MS=200
+448:CONFIG_PELT_UTIL_HALFLIFE_16=y
+449:CONFIG_RCU_LAZY=y
+450:CONFIG_RCU_NOCB_CPU=y
+453:CONFIG_CMDLINE="cgroup_disable=pressure rcutree.android_enable_rcu_lazy"
+454:CONFIG_CMDLINE_EXTEND=y
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- r8q.config (configs específicas do device) ---"
+[?2004l--- r8q.config (configs específicas do device) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -cE "^CONFIG_" arch/arm64/configs/vendor/samsung/r8q.config
+[?2004l61
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- ksu.config (KernelSU) ---"
+[?2004l--- ksu.config (KernelSU) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m cat arch/arm64/configs/vendor/not/ksu.config
+[?2004lCONFIG_KSU=y
+CONFIG_KSU_HACK_ARM64_BRANCH_LINK=y
+# CONFIG_KSU_TAMPER_SYSCALL_TABLE is not set
+CONFIG_KSU_LSM_SECURITY_HOOKS=y
+CONFIG_KSU_FEATURE_SULOG=y
+CONFIG_KSU_FEATURE_ADBROOT=y
+# CONFIG_KSU_FEATURE_ADBROOT_DEFAULT_ENABLE is not set
+CONFIG_KSU_HOSTSREDIRECT=y
+# CONFIG_KSU_ENABLE_FULL_UID_CHECKS is not set
+CONFIG_KSU_THRONE_TRACKER_ALWAYS_THREADED=y
+# CONFIG_KSU_NOPRINTK is not set
+CONFIG_KSU_SHELL_HAS_SU_ALWAYS=y
+# CONFIG_KSU_DEBUG is not set
+CONFIG_KSU_HEURISTIC_IN_TREE_BUILD=y
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- localversion.config ---"
+[?2004l--- localversion.config ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m cat arch/arm64/configs/vendor/not/localversion.config
+[?2004lCONFIG_LOCALVERSION="-ZenoKernel"
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- stock-defconfig (versão no repo, antes do build) ---"
+[?2004l--- stock-defconfig (versão no repo, antes do build) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -E "^CONFIG_ARM64_VA_BITS=" arch/arm64/configs/stock-defconfig
+[?2004lCONFIG_ARM64_VA_BITS=39
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 5] KCONFIG INTEGRIDADE"
+[?2004l
+### [SEÇÃO 5] KCONFIG INTEGRIDADE
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Kconfig do PELT (choice block) ---"
+[?2004l--- Kconfig do PELT (choice block) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m sed -n '820,850p' init/Kconfig | grep -E "PELT_UTIL_HALFLIFE|choice|endchoice"
+[?2004lchoice
+       default PELT_UTIL_HALFLIFE_32
+config PELT_UTIL_HALFLIFE_32
+config PELT_UTIL_HALFLIFE_16
+config PELT_UTIL_HALFLIFE_8
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Kconfig do RCU_LAZY (dependência) ---"
+[?2004l--- Kconfig do RCU_LAZY (dependência) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m sed -n '265,280p' kernel/rcu/Kconfig
+[?2004l
+	  Say Y here if you hate IPIs.
+	  Say N here if you hate read-side memory barriers.
+	  Take the default if you are unsure.
+
+config RCU_LAZY
+	bool "RCU callback lazy invocation functionality"
+	depends on RCU_NOCB_CPU
+	default y
+	help
+	  To save power, batch RCU callbacks and flush after delay, memory
+	  pressure or callback list growing too big.
+
+config RCU_BOOT_END_DELAY
+	int "Minimum time before RCU may consider in-kernel boot as completed"
+	range 0 120000
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Kconfig do CPU_EVENT_BOOST ---" [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K"
+[?2004l--- Kconfig do CPU_EVENT_BOOST ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -A10 "config CPU_EVENT_BOOST" drivers/cpufreq/Kconfig 2>/dev/null | head -15
+[?2004lconfig CPU_EVENT_BOOST
+	bool "CPU Input Boost"
+	default y
+	help
+	  Boosts the CPU on touchscreen and touchpad input, and allows for
+	  boosting on other custom events, mainly which is intended to be for
+	  boosting when there is a new frame ready to be rendered to the
+	  display. The boost frequencies for this driver should be set so that
+	  frame drops are near-zero at the boosted frequencies and power
+	  consumption is minimized at said frequency combination.
+
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 6] AUDITORIA DOS MODDINGS ZENOKERNEL"
+[?2004l
+### [SEÇÃO 6] AUDITORIA DOS MODDINGS ZENOKERNEL
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.1 CPU Boost (drivers/cpufreq/cpu_event_boost.c) ---"
+[?2004l
+--- 6.1 CPU Boost (drivers/cpufreq/cpu_event_boost.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "static void __cpu_input_boost_kick|static int cpu_notifier_cb|static void input_unboost_worker|cpufreq_verify_within_limits|INPUT_BOOST_FREQ_PERFP|INPUT_BOOST_DURATION_MS" drivers/cpufreq/cpu_event_boost.c | head -10
+[?2004l39:static void input_unboost_worker(struct work_struct *work);
+60:		freq = CONFIG_INPUT_BOOST_FREQ_PERFP;
+92:static void __cpu_input_boost_kick(struct boost_drv *b)
+99:			      msecs_to_jiffies(CONFIG_INPUT_BOOST_DURATION_MS)))
+142:static void input_unboost_worker(struct work_struct *work)
+209:static int cpu_notifier_cb(struct notifier_block *nb, unsigned long action,
+236:		cpufreq_verify_within_limits(policy, policy->min, policy->min);
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "Eventos registrados (input handlers):"
+[?2004lEventos registrados (input handlers):
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "cpu_input_boost_input_handler|input_register_handler" drivers/cpufreq/cpu_event_boost.c [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kc
+[?2004l342:static struct input_handler cpu_input_boost_input_handler = {
+363:	cpu_input_boost_input_handler.private = b;
+364:	ret = input_register_handler(&cpu_input_boost_input_handler);
+391:	input_unregister_handler(&cpu_input_boost_input_handler);
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.2 Sultan Schedutil Fix (kernel/sched/cpufreq_schedutil.c) ---"
+[?2004l
+--- 6.2 Sultan Schedutil Fix (kernel/sched/cpufreq_schedutil.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "limits_changed" kernel/sched/cpufreq_schedutil.c | head -8
+[?2004l47:	bool			limits_changed;
+162:	if (unlikely(READ_ONCE(sg_policy->limits_changed))) {
+166:		 * The above limits_changed update must occur before the reads
+284:	if (freq == sg_policy->cached_raw_freq && !sg_policy->need_freq_update && !sg_policy->limits_changed)
+287:	sg_policy->limits_changed = false;
+1016:	sg_policy->limits_changed		= false;
+1100:	 * The limits_changed update below must take place before the updates
+1108:	WRITE_ONCE(sg_policy->limits_changed, true);
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.3 GPU Undervolt (arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi) ---"
+[?2004l
+--- 6.3 GPU Undervolt (arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "opp-microvolt|opp-hz" arch/arm64/boot/dts/vendor/qcom/kona-v2-gpu.dtsi | head -10
+[?2004l12:                        opp-hz = /bits/ 64 <910000000>;
+13:                        opp-microvolt = <390>;
+16:                        opp-hz = /bits/ 64 <880000000>;
+17:                        opp-microvolt = <340>;
+22:			opp-hz = /bits/ 64 <670000000>;
+23:			opp-microvolt = <262>;
+27:			opp-hz = /bits/ 64 <587000000>;
+28:			opp-microvolt = <230>;
+32:			opp-hz = /bits/ 64 <525000000>;
+33:			opp-microvolt = <192>;
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.4 GPU Timers Dinâmicos (drivers/devfreq/governor_msm_adreno_tz.c) ---"
+[?2004l
+--- 6.4 GPU Timers Dinâmicos (drivers/devfreq/governor_msm_adreno_tz.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "safe_rate|refresh_rate|floor_dynamic|min_busy_dynamic|ceiling_dynamic|scm_data\[2\]" drivers/devfreq/governor_msm_adreno_tz.c | head -10
+[?2004l16:#include <drm/drm_refresh_rate.h>
+414:			.args[2] = scm_data[2],
+428:		desc.args[2] = scm_data[2];
+620:        unsigned int refresh_rate = dsi_panel_get_refresh_rate();
+621:        unsigned int safe_rate = min(max(refresh_rate, 60U), 120U);
+622:        unsigned int floor_dynamic = 120000 / safe_rate;
+623:        unsigned int min_busy_dynamic = 30000 / safe_rate;
+624:        unsigned int ceiling_dynamic = 960000 / safe_rate;
+626:		(priv->bin.total_time < floor_dynamic) ||
+627:		(unsigned int) priv->bin.busy_time < min_busy_dynamic) {
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.5 GPU Idle Timeout (drivers/gpu/msm/kgsl_pwrctrl.c) ---"
+[?2004l
+--- 6.5 GPU Idle Timeout (drivers/gpu/msm/kgsl_pwrctrl.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m sed -n '2418,2425p' drivers/gpu/msm/kgsl_pwrctrl.c
+[?2004lstatic unsigned long kgsl_pwrctrl_idle_timeout(void)
+{
+        unsigned int refresh_rate = dsi_panel_get_refresh_rate();
+        unsigned int safe_rate = min(max(refresh_rate, 60U), 120U);
+        return msecs_to_jiffies(6000 / safe_rate);
+}
+void kgsl_idle_check(struct work_struct *work)
+{
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.6 KGSL RT Priority (drivers/gpu/msm/kgsl.c) ---"
+[?2004l
+--- 6.6 KGSL RT Priority (drivers/gpu/msm/kgsl.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -n "sched_priority = 16" drivers/gpu/msm/kgsl.c
+[?2004l5518:	struct sched_param param = { .sched_priority = 16 };
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.7 Touch Zinitix (drivers/input/touchscreen/zinitix/zt7650/zinitix_ts.c) ---"
+[?2004l
+--- 6.7 Touch Zinitix (drivers/input/touchscreen/zinitix/zt7650/zinitix_ts.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "cpumask_set_cpu|set_user_nice|touch_irq_mask" drivers/input/touchscreen/zinitix/zt7650/zinitix_ts.c | head -10
+[?2004l3524:        set_user_nice(current, -20);
+10155:                cpumask_t touch_irq_mask;
+10156:                cpumask_clear(&touch_irq_mask);
+10157:                cpumask_set_cpu(4, &touch_irq_mask);
+10158:                cpumask_set_cpu(5, &touch_irq_mask);
+10159:                cpumask_set_cpu(6, &touch_irq_mask);
+10160:                cpumask_set_cpu(7, &touch_irq_mask);
+10161:                irq_set_affinity_hint(info->irq, &touch_irq_mask);
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.8 Bateria — Kthread (kernel/zeno_power_tweaks.c) ---"
+[?2004l
+--- 6.8 Bateria — Kthread (kernel/zeno_power_tweaks.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "vm_swappiness|dirty_ratio|dirty_background|late_initcall|ssleep" kernel/zeno_power_tweaks.c
+[?2004l8:extern int vm_swappiness;
+9:extern int vm_dirty_ratio;
+10:extern int dirty_background_ratio;
+12:extern unsigned long dirty_background_bytes;
+16:    ssleep(45);
+19:        WRITE_ONCE(vm_swappiness, 10);
+20:        WRITE_ONCE(dirty_background_ratio, 5);
+21:        WRITE_ONCE(vm_dirty_ratio, 10);
+23:        WRITE_ONCE(dirty_background_bytes, 0UL);
+24:        ssleep(60);
+34:late_initcall(zeno_power_tweaks_init);
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "No Makefile:"
+[?2004lNo Makefile:
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -n "zeno_power_tweaks" kernel/Makefile
+[?2004l48:obj-y += zeno_power_tweaks.o
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.9 BBR Kthread (net/ipv4/tcp_cong.c) ---"
+[?2004l
+--- 6.9 BBR Kthread (net/ipv4/tcp_cong.c) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "zeno_bbr_thread|call_usermodehelper|kthread_run" net/ipv4/tcp_cong.c
+[?2004l484:static int zeno_bbr_thread(void *data)
+489:    call_usermodehelper(argv[0], argv, envp, UMH_WAIT_EXEC);
+495:    kthread_run(zeno_bbr_thread, NULL, "zeno_bbr_kthread");
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.10 WoW Timeout (drivers/staging/qcacld-3.0/...) ---"
+[?2004l
+--- 6.10 WoW Timeout (drivers/staging/qcacld-3.0/...) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "CFG_PMO_WOW_DATA_INACTIVITY_TIMEOUT|^[[:space:]]*10," drivers/staging/qcacld-3.0/components/pmo/dispatcher/inc/wlan_pmo_common_cfg.h | head -10 [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K0
+[?2004l135:	10, \
+420:#define CFG_PMO_WOW_DATA_INACTIVITY_TIMEOUT CFG_INI_UINT( \
+424:		10, \
+463:	CFG(CFG_PMO_WOW_DATA_INACTIVITY_TIMEOUT) \
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n--- 6.11 Display dsi_ctrl (labels vs gotos) ---"
+[?2004l
+--- 6.11 Display dsi_ctrl (labels vs gotos) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "Labels error: $(grep -c '^error:' techpack/display/msm/dsi/dsi_ctrl.c)"
+[?2004lLabels error: 19
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "Gotos error:  $(grep -c 'goto error;' techpack/display/msm/dsi/dsi_ctrl.c)"
+[?2004lGotos error:  35
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "Arquivos com label 'error:' órfão (não pareado com goto):"
+[?2004lArquivos com label 'error:' órfão (não pareado com goto):
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m awk '/^error:/ {labels++} /goto error;/ {gotos++} END {print "  Labels:", labels, "Gotos:", gotos, "(OK se gotos>=labels)"}' techpack/display/msm/dsi/dsi_ctrl.c
+[?2004l  Labels: 19 Gotos: 35 (OK se gotos>=labels)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 7] BUSCA POR RISCOS (arquivos mortos, referências quebradas)"
+[?2004l
+### [SEÇÃO 7] BUSCA POR RISCOS (arquivos mortos, referências quebradas)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- fts_ts.c referenciado? (dossiê diz que é código morto) ---"
+[?2004l--- fts_ts.c referenciado? (dossiê diz que é código morto) ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -rn "fts_ts.c" drivers/input/touchscreen/Makefile 2>/dev/null || echo "  fts_ts.c NÃO está compilado (correto)"
+[?2004l  fts_ts.c NÃO está compilado (correto)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- .o referenciados no Makefile mas sem .c correspondente? ---"
+[?2004l--- .o referenciados no Makefile mas sem .c correspondente? ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m for d in drivers/cpufreq drivers/devfreq drivers/gpu/msm drivers/input/touchscreen/zinitix/zt7650 kernel net/ipv4; do
+[?2004l[?2004h>   for o in $(grep -oE "[a-z_]+\.o" "$d/Makefile" 2>/dev/null | sort -u); do
+[?2004l[?2004h>     c="${o%.o}.c"
+[?2004l[?2004h>     [ ! -f "$d/$c" ] && echo "  [ALERTA] $d/$o sem $c" [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K"
+[?2004l[?2004h>   done
+[?2004l[?2004h> done
+[?2004l  [ALERTA] drivers/cpufreq/_cpufreq.o sem _cpufreq.c
+  [ALERTA] drivers/cpufreq/_freq.o sem _freq.c
+  [ALERTA] drivers/cpufreq/centrino.o sem centrino.c
+  [ALERTA] drivers/cpufreq/clockmod.o sem clockmod.c
+  [ALERTA] drivers/cpufreq/debug.o sem debug.c
+  [ALERTA] drivers/cpufreq/debugfs.o sem debugfs.c
+  [ALERTA] drivers/cpufreq/dt.o sem dt.c
+  [ALERTA] drivers/cpufreq/hw.o sem hw.c
+  [ALERTA] drivers/cpufreq/ich.o sem ich.c
+  [ALERTA] drivers/cpufreq/kryo.o sem kryo.c
+  [ALERTA] drivers/cpufreq/lib.o sem lib.c
+  [ALERTA] drivers/cpufreq/platdev.o sem platdev.c
+  [ALERTA] drivers/cpufreq/smi.o sem smi.c
+  [ALERTA] drivers/cpufreq/suspmod.o sem suspmod.c
+  [ALERTA] drivers/devfreq/_dmc.o sem _dmc.c
+  [ALERTA] drivers/devfreq/bus.o sem bus.c
+  [ALERTA] drivers/devfreq/bwmon.o sem bwmon.c
+  [ALERTA] drivers/devfreq/event.o sem event.c
+  [ALERTA] drivers/devfreq/mon.o sem mon.c
+  [ALERTA] drivers/gpu/msm/msm_adreno.o sem msm_adreno.c
+  [ALERTA] drivers/gpu/msm/msm_kgsl_core.o sem msm_kgsl_core.c
+  [ALERTA] drivers/gpu/msm/xx.o sem xx.c
+  [ALERTA] drivers/gpu/msm/xx_gmu.o sem xx_gmu.c
+  [ALERTA] drivers/gpu/msm/xx_preempt.o sem xx_preempt.c
+  [ALERTA] drivers/gpu/msm/xx_rgmu.o sem xx_rgmu.c
+  [ALERTA] kernel/_cfi.o sem _cfi.c
+  [ALERTA] kernel/_extable.o sem _extable.c
+  [ALERTA] kernel/_irq_work.o sem _irq_work.c
+  [ALERTA] kernel/_kcov.o sem _kcov.c
+  [ALERTA] kernel/_module.o sem _module.c
+  [ALERTA] kernel/_softirq.o sem _softirq.c
+  [ALERTA] kernel/_sys_ni.o sem _sys_ni.c
+  [ALERTA] net/ipv4/_input.o sem _input.c
+  [ALERTA] net/ipv4/_mode_beet.o sem _mode_beet.c
+  [ALERTA] net/ipv4/_mode_transport.o sem _mode_transport.c
+  [ALERTA] net/ipv4/_mode_tunnel.o sem _mode_tunnel.c
+  [ALERTA] net/ipv4/_offload.o sem _offload.c
+  [ALERTA] net/ipv4/_output.o sem _output.c
+  [ALERTA] net/ipv4/_policy.o sem _policy.c
+  [ALERTA] net/ipv4/_protocol.o sem _protocol.c
+  [ALERTA] net/ipv4/_state.o sem _state.c
+  [ALERTA] net/ipv4/_tunnel.o sem _tunnel.c
+  [ALERTA] net/ipv4/fou.o sem fou.c
+  [ALERTA] net/ipv4/gre.o sem gre.c
+  [ALERTA] net/ipv4/udp_tunnel.o sem udp_tunnel.c
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  (nenhum alerta = todos os .o têm .c)"
+[?2004l  (nenhum alerta = todos os .o têm .c)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "--- Símbolos das kthreads registrados? ---"
+[?2004l--- Símbolos das kthreads registrados? ---
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -rn "zeno_bbr_thread\|zeno_power_tweaks_init" kernel/ net/ | grep -E "late_initcall|kthread_run"
+[?2004lkernel/zeno_power_tweaks.c:34:late_initcall(zeno_power_tweaks_init);
+net/ipv4/tcp_cong.c:495:    kthread_run(zeno_bbr_thread, NULL, "zeno_bbr_kthread");
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 8] WORKFLOW CI (r8q-build.yml)"
+[?2004l
+### [SEÇÃO 8] WORKFLOW CI (r8q-build.yml)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "key:|Verify .config|Verify embedded|PELT_UTIL|CMDLINE|ccache -C" .github/workflows/r8q-build.yml | head -15
+[?2004l26:          key: ${{ runner.os }}-kernel-r8q-zeno-v2
+38:          ccache -C --verbose 2>/dev/null || true
+41:      - name: Verify .config (fail loud)
+45:          for cfg in CONFIG_PELT_UTIL_HALFLIFE_16 CONFIG_RCU_LAZY CONFIG_RCU_NOCB_CPU; do
+48:          grep -q '^CONFIG_CMDLINE=.*android_enable_rcu_lazy' out/.config || { echo "FATAL: CMDLINE wrong"; exit 1; }
+50:          echo "CMDLINE: $(grep '^CONFIG_CMDLINE=' out/.config)"
+53:      - name: Verify embedded config_data.gz (fail loud)
+58:            zcat out/kernel/config_data.gz | grep -E "VA_BITS|PELT_UTIL_HALFLIFE|RCU_LAZY|CMDLINE="
+60:            zcat out/kernel/config_data.gz | grep -q '^CONFIG_PELT_UTIL_HALFLIFE_16=y' || { echo "FATAL: embedded PELT missing!"; exit 1; }
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 9] BUILD SCRIPT (build-local.sh) — Verificações"
+[?2004l
+### [SEÇÃO 9] BUILD SCRIPT (build-local.sh) — Verificações
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m grep -nE "cp out/.config|rm -f out/kernel/config_data|VA_BITS=48|do.devicecheck|HARDWARE_SKU" build-local.sh | head -10
+[?2004l157:cp out/.config arch/arm64/configs/stock-defconfig
+158:rm -f out/kernel/config_data.gz out/kernel/configs.o
+164:    zcat out/kernel/config_data.gz | grep -q "^CONFIG_ARM64_VA_BITS=48" || { echo -e "\033[0;31mFATAL: embedded config is 39\033[0m"; exit 1; }
+198:    sed -i 's/^do.devicecheck=1/do.devicecheck=0/' AnyKernel3/anykernel.sh
+202:    'HARDWARE_SKU=$(getprop ro.boot.hardware.sku)' \
+203:    'if [ "$HARDWARE_SKU" != "r8q" ] && [ "$HARDWARE_SKU" != "r8" ]; then' \
+205:    '    ui_print "! Detected SKU: $HARDWARE_SKU"' \
+208:    'ui_print "- Device verified: $HARDWARE_SKU"' \
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n### [SEÇÃO 10] ZIP EM STORAGE" [A
+[?2004l
+### [SEÇÃO 10] ZIP EM STORAGE
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m ZIP=$(ls ~/storage/downloads/Zeno*.zip 2>/dev/null | head -1)
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m if [ -n "$ZIP" ]; then
+[?2004l[?2004h>   echo "ZIP: $(basename $ZIP) ($(stat -c%s $ZIP) bytes)"
+[?2004l[?2004h>   unzip -t "$ZIP" >/dev/null 2>&1 && echo "Integridade: OK" || echo "Integridade: CORROMPIDO"
+[?2004l[?2004h>   unzip -p "$ZIP" anykernel.sh | grep -E "do.devicecheck|HARDWARE_SKU" | head -3
+[?2004l[?2004h>   unzip -l "$ZIP" | grep -E "Image.gz|dtb|dtbo.img" | awk '{print "  ", $4, $1}'
+[?2004l[?2004h> else
+[?2004l[?2004h>   echo "Nenhum ZIP em ~/storage/downloads"
+[?2004l[?2004h> fi
+[?2004lZIP: ZenoKernel-ksu-ZenoKernel-v2.0-f0dd8712-r8q.zip (19224141 bytes)
+Integridade: OK
+do.devicecheck=0
+HARDWARE_SKU=$(getprop ro.boot.hardware.sku)
+if [ "$HARDWARE_SKU" != "r8q" ] && [ "$HARDWARE_SKU" != "r8" ]; then
+   Image.gz 15020336
+   dtb 1370720
+   dtbo.img 4786669
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n═══════════════════════════════════════════════════════════════════"
+[?2004l
+═══════════════════════════════════════════════════════════════════
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  VEREDITO FINAL — CONTAGEM DE PROBLEMAS"
+[?2004l  VEREDITO FINAL — CONTAGEM DE PROBLEMAS
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "═══════════════════════════════════════════════════════════════════"
+[?2004l═══════════════════════════════════════════════════════════════════
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m LBL=$(grep -c '^error:' techpack/display/msm/dsi/dsi_ctrl.c)
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m GT=$(grep -c 'goto error;' techpack/display/msm/dsi/dsi_ctrl.c)
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m if [ "$LBL" -le "$GT" ]; then echo "  dsi_ctrl: OK (labels <= gotos)"; else echo "  dsi_ctrl: ALERTA"; fi
+[?2004l  dsi_ctrl: OK (labels <= gotos)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m if git status --porcelain | grep -q .; then echo "  Git: ALERTA (working tree sujo)"; else echo "  Git: OK (working tree limpo)"; fi
+[?2004l  Git: OK (working tree limpo)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m if [ "$(git log origin/staging..HEAD --oneline 2>/dev/null | wc -l)" -eq 0 ]; then echo "  Push: OK (sincronizado)"; else echo "  Push: ALERTA (commits pendentes)"; fi
+[?2004l  Push: OK (sincronizado)
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m 
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo -e "\n═══════════════════════════════════════════════════════════════════"
+[?2004l
+═══════════════════════════════════════════════════════════════════
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  Auditoria concluída. Arquivo salvo em:"
+[?2004l  Auditoria concluída. Arquivo salvo em:
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "  $OUT"
+[?2004l  /sdcard/ZENOKERNEL_AUDIT_20261031_180200.txt
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m echo "═══════════════════════════════════════════════════════════════════"
+[?2004l═══════════════════════════════════════════════════════════════════
+[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m [K[0;32m~/Zenokernel[0m [0;97m$[0m [K[0;32m~/Zenokernel[0m [0;97m$[0m [K[0;32m~/Zenokernel[0m [0;97m$[0m [K[0;32m~/Zenokernel[0m [0;97m$[0m clesr[K[Kar
+[?2004l[H[2J[3J[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m :; cd ~/Zenokernel
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m :; mkdir -p docs/audits
+[?2004l[?2004h[0;32m~/Zenokernel[0m [0;97m$[0m :; cp /sdcard/ZENOKERNEL_AUDIT_*.txt docs/audits/
+[?2004l
