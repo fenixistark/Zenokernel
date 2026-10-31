@@ -68,7 +68,7 @@ PROJECT_CONFIG="vendor/samsung/${MODEL}.config"
 
 [ -z "${PLATFORM_VERSION}" ] && export PLATFORM_VERSION=11
 
-ZIPNAME="ZenoKernel-v1.0.zip"
+ZIPNAME="ZenoKernel-v2.0.zip"
 PLATFORM_DEFCONFIG="vendor/kona-perf_defconfig"
 COMMON_DEFCONFIG="vendor/samsung/kona-sec-common.config"
 
