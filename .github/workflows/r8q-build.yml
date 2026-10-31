@@ -50,6 +50,20 @@ jobs:
           echo "CMDLINE: $(grep '^CONFIG_CMDLINE=' out/.config)"
           echo "=== OK ==="
 
+      - name: Verify embedded config_data.gz (fail loud)
+        run: |
+          set -e
+          echo "=== Sanity check embedded config_data.gz ==="
+          if [ -f out/kernel/config_data.gz ]; then
+            zcat out/kernel/config_data.gz | grep -E "VA_BITS|PELT_UTIL_HALFLIFE|RCU_LAZY|CMDLINE="
+            zcat out/kernel/config_data.gz | grep -q '^CONFIG_ARM64_VA_BITS=48' || { echo "FATAL: embedded config is 39!"; exit 1; }
+            zcat out/kernel/config_data.gz | grep -q '^CONFIG_PELT_UTIL_HALFLIFE_16=y' || { echo "FATAL: embedded PELT missing!"; exit 1; }
+          else
+            echo "FATAL: out/kernel/config_data.gz not found!"
+            exit 1
+          fi
+          echo "=== OK ==="
+
       - name: Upload .config for audit
         uses: actions/upload-artifact@v4
         if: always()
