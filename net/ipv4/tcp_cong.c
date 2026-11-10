@@ -485,11 +485,12 @@ struct tcp_congestion_ops tcp_reno = {
 static int zeno_bbr_thread(void *data)
 {
     ssleep(30);
-    /* ZenoKernel: Direct kernel sysctl write to bypass SELinux */
-    if (sysctl_tcp_congestion_control)
-        strscpy(sysctl_tcp_congestion_control, "bbr", TCP_CA_NAME_MAX);
-    pr_info("ZENO_BBR: Forced BBR via direct kernel sysctl
-");
+    rtnl_lock();
+    if (tcp_set_default_congestion_control(&init_net, "bbr") == 0)
+        pr_info("ZENO_BBR: BBR forced successfully\n");
+    else
+        pr_err("ZENO_BBR: Failed to force BBR\n");
+    rtnl_unlock();
     return 0;
 }
 
