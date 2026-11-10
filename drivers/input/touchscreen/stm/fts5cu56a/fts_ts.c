@@ -62,7 +62,6 @@
 #endif
 
 #ifdef USE_OPEN_CLOSE
-static cpumask_t zeno_touch_mask;
 static int fts_input_open(struct input_dev *dev);
 static void fts_input_close(struct input_dev *dev);
 #ifdef USE_OPEN_DWORK
@@ -2361,13 +2360,6 @@ int fts_irq_enable(struct fts_ts_info *info,
         cpumask_set_cpu(6, &zeno_touch_mask);
         cpumask_set_cpu(7, &zeno_touch_mask);
         irq_set_affinity_hint(info->irq, &zeno_touch_mask);
-        pr_info("ZENO_TOUCH: IRQ pinned to CPUs 4-7\n");
-    cpumask_clear(&zeno_touch_mask);
-    cpumask_set_cpu(4, &zeno_touch_mask);
-    cpumask_set_cpu(5, &zeno_touch_mask);
-    cpumask_set_cpu(6, &zeno_touch_mask);
-    cpumask_set_cpu(7, &zeno_touch_mask);
-    irq_set_affinity_hint(info->irq, &zeno_touch_mask);
     pr_info("ZENO_TOUCH: IRQ pinned to CPUs 4-7\n");
 
     retval = request_threaded_irq(info->irq, NULL,
