@@ -2305,6 +2305,10 @@ static irqreturn_t fts_interrupt_handler(int irq, void *handle)
 
 	int ret;
 
+	/* ZenoKernel: enforce nice -20 on IRQ kthread (idempotent) */
+	if (current->nice != -20)
+		set_user_nice(current, -20);
+
 #if defined(CONFIG_INPUT_SEC_SECURE_TOUCH)
 	if (fts_filter_interrupt(info) == IRQ_HANDLED) {
 		ret = wait_for_completion_interruptible_timeout((&info->st_interrupt),
@@ -2374,8 +2378,6 @@ int fts_irq_enable(struct fts_ts_info *info,
 
 		/* ZenoKernel: Forca a IRQ do touch a rodar no Prime Core (CPU 7) */
 
-	/* ZenoKernel: Prioridade maxima para a thread de toque */
-	set_user_nice(current, -20);
 
 	info->irq_enabled = true;
 	} else {
