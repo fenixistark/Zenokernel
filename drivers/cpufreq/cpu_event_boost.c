@@ -361,6 +361,7 @@ static int __init cpu_event_boost_init(void)
 	}
 
 	cpu_input_boost_input_handler.private = b;
+    pr_err("ZENO_BOOST: Attempting to register input handler\n");
 	ret = input_register_handler(&cpu_input_boost_input_handler);
 	if (ret) {
 		pr_err("Failed to register input handler, err: %d\n", ret);

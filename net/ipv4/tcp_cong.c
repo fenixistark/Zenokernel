@@ -481,14 +481,18 @@ struct tcp_congestion_ops tcp_reno = {
 };
 
 
+
 static int zeno_bbr_thread(void *data)
 {
-    char *argv[] = { "/system/bin/sh", "-c", "echo bbr > /proc/sys/net/ipv4/tcp_congestion_control", NULL };
-    char *envp[] = { "HOME=/", "PATH=/sbin:/system/sbin:/system/bin:/system/xbin", NULL };
     ssleep(30);
-    call_usermodehelper(argv[0], argv, envp, UMH_WAIT_EXEC);
+    /* ZenoKernel: Direct kernel sysctl write to bypass SELinux */
+    if (sysctl_tcp_congestion_control)
+        strscpy(sysctl_tcp_congestion_control, "bbr", TCP_CA_NAME_MAX);
+    pr_info("ZENO_BBR: Forced BBR via direct kernel sysctl
+");
     return 0;
 }
+
 
 static int __init zeno_bbr_init(void)
 {

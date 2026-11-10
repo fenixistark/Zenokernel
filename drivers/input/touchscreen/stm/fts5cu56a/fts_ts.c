@@ -2352,7 +2352,16 @@ int fts_irq_enable(struct fts_ts_info *info,
 		if (info->irq_enabled)
 			return retval;
 
-		retval = request_threaded_irq(info->irq, NULL,
+		
+        cpumask_t zeno_touch_mask;
+        cpumask_clear(&zeno_touch_mask);
+        cpumask_set_cpu(4, &zeno_touch_mask);
+        cpumask_set_cpu(5, &zeno_touch_mask);
+        cpumask_set_cpu(6, &zeno_touch_mask);
+        cpumask_set_cpu(7, &zeno_touch_mask);
+        irq_set_affinity_hint(info->irq, &zeno_touch_mask);
+        pr_info("ZENO_TOUCH: IRQ pinned to CPUs 4-7\n");
+    retval = request_threaded_irq(info->irq, NULL,
 				fts_interrupt_handler, IRQF_TRIGGER_LOW | IRQF_ONESHOT,
 				FTS_TS_DRV_NAME, info);
 		if (retval < 0) {
