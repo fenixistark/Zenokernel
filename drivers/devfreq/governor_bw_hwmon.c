@@ -981,7 +981,7 @@ int register_bw_hwmon(struct device *dev, struct bw_hwmon *hwmon)
 	node->decay_rate = 90;
 	node->io_percent = 16;
 	node->bw_step = 190;
-	node->sample_ms = 50;
+	node->sample_ms = 10;
 	node->up_scale = 0;
 	node->up_thres = 10;
 	node->down_thres = 0;
