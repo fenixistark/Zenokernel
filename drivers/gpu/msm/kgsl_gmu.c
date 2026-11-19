@@ -1414,6 +1414,21 @@ error:
 	return ret;
 }
 
+void gmu_update_freq(struct kgsl_device *device, unsigned int freq)
+{
+	struct gmu_device *gmu = KGSL_GMU_DEVICE(device);
+	int ret;
+
+	if (!gmu || !gmu->clks[0] || gmu->current_freq == freq)
+		return;
+
+	ret = clk_set_rate(gmu->clks[0], freq);
+	if (ret)
+		dev_err(&gmu->pdev->dev, "fail to set GMU clk freq %u: %d\n", freq, ret);
+	else
+		gmu->current_freq = freq;
+}
+
 static int gmu_enable_clks(struct kgsl_device *device)
 {
 	struct gmu_device *gmu = KGSL_GMU_DEVICE(device);
@@ -1422,10 +1437,11 @@ static int gmu_enable_clks(struct kgsl_device *device)
 	if (IS_ERR_OR_NULL(gmu->clks[0]))
 		return -EINVAL;
 
-	ret = clk_set_rate(gmu->clks[0], GMU_FREQUENCY);
+	gmu->current_freq = GMU_FREQUENCY;
+	ret = clk_set_rate(gmu->clks[0], gmu->current_freq);
 	if (ret) {
 		dev_err(&gmu->pdev->dev, "fail to set default GMU clk freq %d\n",
-				GMU_FREQUENCY);
+				gmu->current_freq);
 		return ret;
 	}
 

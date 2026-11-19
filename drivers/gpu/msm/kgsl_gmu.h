@@ -9,7 +9,8 @@
 #include "kgsl_hfi.h"
 
 #define GMU_PWR_LEVELS  2
-#define GMU_FREQUENCY   200000000
+#define GMU_FREQUENCY 200000000
+#define GMU_FREQUENCY_MAX 500000000
 #define MAX_GMUFW_SIZE	0x8000	/* in bytes */
 
 #define BWMEM_SIZE	(12 + (4 * NUM_BW_LEVELS))	/*in bytes*/
@@ -194,6 +195,7 @@ struct gmu_device {
 	unsigned int num_gpupwrlevels;
 	unsigned int num_bwlevels;
 	unsigned int num_cnocbwlevels;
+	unsigned int current_freq;
 	struct rpmh_votes_t rpmh_votes;
 	struct regulator *cx_gdsc;
 	struct regulator *gx_gdsc;
@@ -219,5 +221,6 @@ unsigned int gmu_get_memtype_base(struct gmu_device *gmu,
 
 int gmu_prealloc_req(struct kgsl_device *device, struct gmu_block_header *blk);
 int gmu_cache_finalize(struct kgsl_device *device);
+void gmu_update_freq(struct kgsl_device *device, unsigned int freq);
 
 #endif /* __KGSL_GMU_H */
