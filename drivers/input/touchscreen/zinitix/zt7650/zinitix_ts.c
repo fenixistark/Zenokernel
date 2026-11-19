@@ -18,6 +18,7 @@
 
 #undef TSP_VERBOSE_DEBUG
 
+#include <linux/sched.h>
 #include <linux/module.h>
 #include <linux/input.h>
 #include <linux/i2c.h>
@@ -3521,6 +3522,15 @@ static irqreturn_t zt_touch_work(int irq, void *data)
 	char pos[5];
 	char cur = 0;
 	char old = 0;
+	/* ZenoKernel: FIX R1 — restore IRQ thread RT priority.
+	 * 798a0464 removed set_user_nice(-20) as "redundant"; runtime
+	 * on 1105d7d8 shows irq/445-zt_ts_d at nice -10, SCHED_NORMAL.
+	 * Kernel does NOT elevate threaded IRQs. 25a4116c used set_user_nice
+	 * (CFS only). sched_set_fifo_low gives RT prio 1: preempts all CFS
+	 * (apps, system_server) but yields to audio (RT 5) and SF (RT 8).
+	 */
+	if (!rt_task(current))
+		sched_set_fifo_low(current);
 
 #ifdef CONFIG_INPUT_SEC_SECURE_TOUCH
 	if (IRQ_HANDLED == secure_filter_interrupt(info)) {
