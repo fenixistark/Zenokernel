@@ -14,7 +14,6 @@
 #include <linux/thermal.h>
 
 #include "kgsl_device.h"
-#include "kgsl_gmu.h"
 #include "kgsl_pwrscale.h"
 #include "kgsl_trace.h"
 #include <drm/drm_refresh_rate.h>
@@ -651,10 +650,6 @@ void kgsl_pwrctrl_pwrlevel_change(struct kgsl_device *device,
 	kgsl_pwrctrl_pwrlevel_change_settings(device, 0);
 	kgsl_clk_set_rate(device, pwr->active_pwrlevel);
 	_isense_clk_set_rate(pwr, pwr->active_pwrlevel);
-
-	if (device->gmu_core.ptr)
-		gmu_update_freq(device, (pwrlevel->gpu_freq >= 670000000) ?
-			GMU_FREQUENCY_MAX : GMU_FREQUENCY);
 
 	trace_kgsl_pwrlevel(device,
 			pwr->active_pwrlevel, pwrlevel->gpu_freq,
