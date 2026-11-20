@@ -15,7 +15,7 @@ static int zeno_power_tweaks_thread(void *data)
     ssleep(60); /* Aguarda o Android terminar o boot */
 
     while (!kthread_should_stop()) {
-        WRITE_ONCE(vm_swappiness, 80);
+        WRITE_ONCE(vm_swappiness, 60);
         WRITE_ONCE(dirty_background_ratio, 5);
         WRITE_ONCE(vm_dirty_ratio, 10);
         WRITE_ONCE(vm_dirty_bytes, 0UL);
