@@ -332,26 +332,11 @@
 		/* AOP mailbox for sending ACD enable and disable messages */
 		mboxes = <&qmp_aop 0>;
 		mbox-names = "aop";
-		operating-points-v2 = <&gmu_opp_table>;
 
 		gmu_user: gmu_user {
 			compatible = "qcom,smmu-gmu-user-cb";
 			iommus = <&kgsl_smmu 0x4 0x400>;
 			qcom,iommu-dma = "disabled";
-		};
-
-		gmu_opp_table: opp-table {
-			compatible = "operating-points-v2";
-
-			opp-500000000 {
-				opp-hz = /bits/ 64 <500000000>;
-				opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-			};
-
-			opp-200000000 {
-				opp-hz = /bits/ 64 <200000000>;
-				opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-			};
 		};
 
 		gmu_kernel: gmu_kernel {
